@@ -2,7 +2,7 @@
 
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { GRAPH_CHALLENGES } from "@/content/graphing/challenges";
+import { GRAPH_CHALLENGES, GraphChallenge } from "@/content/graphing/challenges";
 import { GraphingChallenge } from "@/components/practice/GraphingChallenge";
 import { useProgress, UnitId } from "@/lib/progress";
 
@@ -16,6 +16,9 @@ function GraphingPracticeInner() {
   );
   const [index, setIndex] = useState(0);
   const [showCompleted, setShowCompleted] = useState(false);
+  // Holds the challenge being shown after Check is pressed so it stays on screen
+  // while the visible list re-filters around it.
+  const [lockedChallenge, setLockedChallenge] = useState<GraphChallenge | null>(null);
 
   const passedIds = useMemo(
     () => new Set(graphResults.filter((r) => r.passed).map((r) => r.challengeId)),
@@ -38,27 +41,40 @@ function GraphingPracticeInner() {
   }, [allInFilter, passedIds, showCompleted, allPassed]);
 
   const current = visible[index];
+  // The challenge actually rendered — stays fixed after Check until Next/Prev is clicked.
+  const displayed = lockedChallenge ?? current;
 
   const handleResult = (passed: boolean) => {
-    if (!current) return;
+    if (!displayed) return;
+    setLockedChallenge(displayed); // freeze display before visible re-filters
     recordGraph({
-      challengeId: current.id,
-      unit: current.unit,
+      challengeId: displayed.id,
+      unit: displayed.unit,
       passed,
       timestamp: Date.now(),
     });
   };
 
   const changeFilter = (u: UnitId | "all") => {
+    setLockedChallenge(null);
     setFilterUnit(u);
     setIndex(0);
   };
 
-  const next = () => setIndex((i) => (i + 1) % visible.length);
-  const prev = () => setIndex((i) => (i - 1 + visible.length) % visible.length);
+  const next = () => {
+    setLockedChallenge(null);
+    // After a pass, visible is shorter; the same index now points to what was the
+    // next item (items after the removed one shifted left), so just clamp.
+    setIndex((i) => (visible.length > 0 ? i % visible.length : 0));
+  };
+
+  const prev = () => {
+    setLockedChallenge(null);
+    setIndex((i) => (i - 1 + visible.length) % visible.length);
+  };
 
   const passedCount = allInFilter.filter((c) => passedIds.has(c.id)).length;
-  const isPassed = current ? passedIds.has(current.id) : false;
+  const isPassed = displayed ? passedIds.has(displayed.id) : false;
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
@@ -119,18 +135,18 @@ function GraphingPracticeInner() {
         </div>
       </header>
 
-      {!current ? (
+      {!displayed ? (
         <p className="text-sm text-slate-600">No challenges for the selected unit yet.</p>
       ) : (
         <>
-          {isPassed && (
+          {isPassed && !lockedChallenge && (
             <div className="flex items-center gap-2 text-xs text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2">
               <span>✓ You&apos;ve already passed this challenge.</span>
             </div>
           )}
           <GraphingChallenge
-            key={current.id}
-            challenge={current}
+            key={displayed.id}
+            challenge={displayed}
             onResult={handleResult}
           />
           <div className="flex justify-between text-sm items-center">
