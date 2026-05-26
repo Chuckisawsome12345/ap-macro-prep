@@ -27,11 +27,30 @@ function MCQSessionInner() {
   const [session, setSession] = useState<MCQItem[] | null>(null);
   const [index, setIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
+  const [includeRepeats, setIncludeRepeats] = useState(false);
   const recordMCQ = useProgress((s) => s.recordMCQ);
+  const mcqAttempts = useProgress((s) => s.mcqAttempts);
 
-  const pool = useMemo(
+  const seenIds = useMemo(
+    () => new Set(mcqAttempts.map((a) => a.questionId)),
+    [mcqAttempts]
+  );
+
+  const allInSelection = useMemo(
     () => MCQ_BANK.filter((q) => selectedUnits.has(q.unit)),
     [selectedUnits]
+  );
+
+  const unseenInSelection = useMemo(
+    () => allInSelection.filter((q) => !seenIds.has(q.id)),
+    [allInSelection, seenIds]
+  );
+
+  const allSeen = unseenInSelection.length === 0 && allInSelection.length > 0;
+
+  const pool = useMemo(
+    () => (includeRepeats || allSeen ? allInSelection : unseenInSelection),
+    [includeRepeats, allSeen, allInSelection, unseenInSelection]
   );
 
   const start = () => {
@@ -112,8 +131,27 @@ function MCQSessionInner() {
               ))}
             </div>
           </div>
-          <div className="text-xs text-slate-500">
-            {pool.length} question{pool.length === 1 ? "" : "s"} available in pool.
+          <div className="space-y-2">
+            {allSeen ? (
+              <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+                You&apos;ve answered all {allInSelection.length} question{allInSelection.length === 1 ? "" : "s"} in this selection. Showing all questions again.
+              </p>
+            ) : (
+              <p className="text-xs text-slate-500">
+                {unseenInSelection.length} unseen · {allInSelection.length} total in selection
+              </p>
+            )}
+            {!allSeen && (
+              <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={includeRepeats}
+                  onChange={(e) => setIncludeRepeats(e.target.checked)}
+                  className="rounded"
+                />
+                Include already-answered questions
+              </label>
+            )}
           </div>
           <button
             onClick={start}
