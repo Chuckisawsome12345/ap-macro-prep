@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "katex/dist/katex.min.css";
+
+:root {
+  --paper: #f8fafc;
+  --ink: #0f172a;
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.graph-svg {
+  user-select: none;
+  touch-action: none;
+}
+
+.curve-handle {
+  cursor: ew-resize;
+}
+
+.curve-handle:hover {
+  filter: brightness(1.1);
+}
