@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 const links = [
   { href: "/", label: "Dashboard" },
@@ -14,6 +15,13 @@ const links = [
 
 export function Nav() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    router.replace("/login");
+  };
+
   return (
     <nav className="border-b bg-white">
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-6">
@@ -40,6 +48,12 @@ export function Nav() {
             );
           })}
         </div>
+        <button
+          onClick={signOut}
+          className="ml-auto text-xs text-slate-500 hover:text-slate-800 transition"
+        >
+          Sign out
+        </button>
       </div>
     </nav>
   );
