@@ -70,6 +70,42 @@ export const unit1: UnitContent = {
       note: "Use straight-line PPC totals; for bowed-out, slope changes along curve.",
     },
   ],
+  guides: [
+    {
+      title: "How to Answer Terms of Trade Questions",
+      intro:
+        "Terms of trade questions ask you to find an exchange ratio that makes trade mutually beneficial for two producers. They almost always come with a comparative advantage table and ask you to identify a valid or invalid trade price. Here is the exact method that works every time.",
+      steps: [
+        {
+          heading: "Step 1 — Build the opportunity cost table",
+          body:
+            "From the PPC data, calculate the opportunity cost of one unit of each good for each country. If Country A can produce 100 hats OR 50 scarves, then: OC of 1 scarf (for A) = 100/50 = 2 hats; OC of 1 hat (for A) = 50/100 = 0.5 scarves. Do the same for Country B.",
+        },
+        {
+          heading: "Step 2 — Identify who has comparative advantage in what",
+          body:
+            "The country with the lower opportunity cost for a good has the comparative advantage in that good. That country should export that good. Example: if A's OC for scarves is 2 hats and B's is 1.5 hats, Country B has the lower OC → B has comparative advantage in scarves and should export them.",
+        },
+        {
+          heading: "Step 3 — Write the valid range for the terms of trade",
+          body:
+            "The terms of trade (ToT) must lie strictly between the two countries' opportunity costs for the exported good. Trade is mutually beneficial only in that range. Using the hat/scarf example: B exports scarves. OC of 1 scarf: B = 1.5 hats, A = 2 hats. Valid ToT: 1.5 hats < 1 scarf < 2 hats. (At B's OC, B is indifferent and gains nothing. At A's OC, A gains nothing.)",
+        },
+        {
+          heading: "Step 4 — Check each answer choice against the range",
+          body:
+            "The question will offer specific exchange rates (e.g., '1 scarf for 1.6 hats'). A rate is valid if it falls strictly inside the range. A rate at the boundary makes one party indifferent (they could produce it themselves at the same cost). A rate outside the range makes trade unprofitable for one party.",
+        },
+        {
+          heading: "Step 5 — Watch for the 'who benefits more' twist",
+          body:
+            "Sometimes the question asks which party gains more from a specific ToT. The country whose ToT is closer to their own opportunity cost gains less. The country whose ToT is farther from their opportunity cost gains more. Example: if the ToT is 1.9 hats per scarf, A (OC = 2) gains a lot; B (OC = 1.5) gains less.",
+        },
+      ],
+      tip:
+        "Memory trick: draw a number line with each country's OC at the endpoints. Any exchange ratio between them is a valid ToT. The exam will almost always include one option at exactly a boundary (to trap you) and one clearly outside the range (to trap you in the other direction).",
+    },
+  ],
   featuredGraph: "ppc",
   apCentralLinks: [
     {

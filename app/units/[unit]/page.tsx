@@ -65,6 +65,36 @@ export default function UnitPage({ params }: { params: Promise<{ unit: string }>
         </section>
       )}
 
+      {u.guides && u.guides.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Exam strategy guides</h2>
+          {u.guides.map((g) => (
+            <div key={g.title} className="rounded-lg border bg-amber-50 border-amber-200 p-5 space-y-4">
+              <h3 className="font-semibold text-amber-900">{g.title}</h3>
+              <p className="text-sm text-amber-800">{g.intro}</p>
+              <ol className="space-y-3">
+                {g.steps.map((s, i) => (
+                  <li key={i} className="flex gap-3 text-sm">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-300 text-amber-900 flex items-center justify-center font-semibold text-xs">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <span className="font-semibold text-amber-900">{s.heading}: </span>
+                      <span className="text-slate-700">{s.body}</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              {g.tip && (
+                <div className="rounded-md bg-amber-100 border border-amber-300 px-4 py-3 text-sm text-amber-900">
+                  <span className="font-semibold">Tip: </span>{g.tip}
+                </div>
+              )}
+            </div>
+          ))}
+        </section>
+      )}
+
       {u.featuredGraph && (
         <section>
           <h2 className="text-xl font-semibold mb-3">Featured graph (interactive)</h2>

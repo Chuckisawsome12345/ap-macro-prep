@@ -1,6 +1,18 @@
 import type { UnitId } from "@/lib/progress";
 import type { GraphKind } from "@/components/graphs/registry";
 
+export interface GuideStep {
+  heading: string;
+  body: string;
+}
+
+export interface UnitGuide {
+  title: string;
+  intro: string;
+  steps: GuideStep[];
+  tip?: string;
+}
+
 export interface UnitContent {
   id: UnitId;
   title: string;
@@ -9,6 +21,7 @@ export interface UnitContent {
   objectives: string[];
   concepts: { term: string; definition: string; example?: string }[];
   formulas: { label: string; latex: string; note?: string }[];
+  guides?: UnitGuide[];
   featuredGraph?: GraphKind;
   apCentralLinks: { label: string; url: string }[];
 }
