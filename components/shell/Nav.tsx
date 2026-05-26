@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -16,6 +17,17 @@ const links = [
 export function Nav() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isAnonymous, setIsAnonymous] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsAnonymous(user?.is_anonymous ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setIsAnonymous(session?.user?.is_anonymous ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -48,12 +60,21 @@ export function Nav() {
             );
           })}
         </div>
-        <button
-          onClick={signOut}
-          className="ml-auto text-xs text-slate-500 hover:text-slate-800 transition"
-        >
-          Sign out
-        </button>
+        {isAnonymous === true ? (
+          <Link
+            href="/login"
+            className="ml-auto text-xs text-accent underline"
+          >
+            Sign in
+          </Link>
+        ) : (
+          <button
+            onClick={signOut}
+            className="ml-auto text-xs text-slate-500 hover:text-slate-800 transition"
+          >
+            Sign out
+          </button>
+        )}
       </div>
     </nav>
   );

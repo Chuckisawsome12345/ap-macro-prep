@@ -27,6 +27,15 @@ export default function LoginPage() {
     router.replace("/");
   };
 
+  const handleGuest = async () => {
+    setError(null);
+    setLoading(true);
+    const { error } = await supabase.auth.signInAnonymously();
+    setLoading(false);
+    if (error) { setError(error.message); return; }
+    router.replace("/");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface">
       <div className="w-full max-w-sm rounded-xl border bg-white p-8 space-y-6 shadow-sm">
@@ -79,6 +88,23 @@ export default function LoginPage() {
             {mode === "sign_in" ? "Sign up" : "Sign in"}
           </button>
         </p>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative flex justify-center text-xs text-slate-400">
+            <span className="bg-white px-2">or</span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleGuest}
+          disabled={loading}
+          className="w-full py-2 rounded-md border border-slate-300 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+        >
+          Continue as guest
+        </button>
       </div>
     </div>
   );
